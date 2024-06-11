@@ -2,12 +2,11 @@ import os
 import json
 import re
 from nltk.corpus import stopwords
-from spellchecker import SpellChecker
 import contractions
 from tqdm import tqdm
 from datetime import datetime
 
-def clean_comment(comment, custom_stopwords, spell_checker):
+def clean_comment(comment, custom_stopwords, ):
     """Clean and tokenize the comment string."""
     if comment is None:
         return ""
@@ -41,7 +40,7 @@ def clean_comment(comment, custom_stopwords, spell_checker):
         # Basic email removal
         (r'\S+@\S+', ''),
     ]
-    
+
     # Apply the cleaning rules to the comment
     for pattern, replacement in cleaning_rules:
         comment = re.sub(pattern, replacement, comment)
@@ -49,13 +48,10 @@ def clean_comment(comment, custom_stopwords, spell_checker):
     # Expand contractions
     comment = contractions.fix(comment)
 
-    # Correct spelling
-    comment = spell_checker.correction(comment)
-    
     # Ensure comment is not an empty string after cleaning
     if comment is None or not comment.strip():
         return ""
-    
+
     return comment
 
 def get_stopwords():
@@ -65,34 +61,30 @@ def get_stopwords():
     ]
     return set(stopwords.words("english")) | set(custom_stopwords)
 
-def get_spell_checker():
-    """Create a spell checker instance."""
-    return SpellChecker()
-
 class DatasetCleaner:
     def __init__(self, input_folder):
         self.input_folder = input_folder
 
-    def clean_comments(self, comments, custom_stopwords, spell_checker):
+    def clean_comments(self, comments, custom_stopwords):
         """Clean the comments section of each entry."""
         unique_comments = set()  # To store unique comments
         cleaned_comments = []    # To store cleaned comments
-        
+
         for entry in tqdm(comments, desc="Cleaning comments", unit="comment"):
             if 'comment' in entry and entry['comment']:
-                cleaned_comment = clean_comment(entry['comment'], custom_stopwords, spell_checker)
+                cleaned_comment = clean_comment(entry['comment'], custom_stopwords, )
                 if cleaned_comment and cleaned_comment not in unique_comments:
                     unique_comments.add(cleaned_comment)
                     cleaned_comments.append(entry)
         return cleaned_comments
 
-    def _clean_json_file(self, file_path, custom_stopwords, spell_checker):
+    def _clean_json_file(self, file_path, custom_stopwords, ):
         with open(file_path, 'r', encoding='utf-8') as file:
             data = json.load(file)
-            cleaned_data = self._clean_json_data(data, custom_stopwords, spell_checker)
+            cleaned_data = self._clean_json_data(data, custom_stopwords, )
         return cleaned_data
 
-    def _clean_json_data(self, data, custom_stopwords, spell_checker):
+    def _clean_json_data(self, data, custom_stopwords, ):
         if isinstance(data, list):
             cleaned_data = []
             for entry in tqdm(data, desc="Processing entries", unit="entry"):
@@ -103,7 +95,7 @@ class DatasetCleaner:
                     entry_date = None
 
                 # Apply cleaning rules to the 'body' field
-                cleaned_comment = clean_comment(entry.get('body', ''), custom_stopwords, spell_checker)
+                cleaned_comment = clean_comment(entry.get('body', ''), custom_stopwords, )
 
                 # Change 'body' to 'comment' and include the formatted date
                 cleaned_entry = {
@@ -117,13 +109,12 @@ class DatasetCleaner:
     def clean_dataset(self):
         """Clean the entire dataset."""
         custom_stopwords = get_stopwords()
-        spell_checker = get_spell_checker()
         json_files = [file for file in os.listdir(self.input_folder) if file.endswith(".json")]
-        
+
         for file_name in tqdm(json_files, desc="Processing files", unit="file"):
             file_path = os.path.join(self.input_folder, file_name)
             print(f"Cleaning file: {file_name}")
-            cleaned_data = self._clean_json_file(file_path, custom_stopwords, spell_checker)
+            cleaned_data = self._clean_json_file(file_path, custom_stopwords, )
 
             # Remove empty comments
             non_empty_comments = [entry for entry in cleaned_data if 'comment' in entry and entry['comment'].strip() != '']
@@ -143,7 +134,6 @@ class DatasetCleaner:
             print(f"Removed original file: {file_name}")
 
 if __name__ == "__main__":
-    folder_path = os.getcwd() + "/cleaned" 
+    folder_path = os.getcwd() + "/cleaned"
     cleaner = DatasetCleaner(folder_path)
     cleaner.clean_dataset()
-
