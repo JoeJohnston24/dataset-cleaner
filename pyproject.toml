@@ -5,16 +5,18 @@ description = ""
 authors = ["JoeJohnston24"]
 license = "MIT"
 readme = "README.md"
+package-mode = false
 
 [tool.poetry.dependencies]
 python = "^3.11"
 nltk = "^3.8.1"
-tqdm = "0"
+tqdm = "^4.66.4"
 python-dateutil = "^2.9.0.post0"
 spellchecker = "^0.4"
 
 [tool.poetry.group.dev.dependencies]
 ruff = "^0.4.8"
+gdown = "^5.2.0"
 
 [build-system]
 requires = ["poetry-core"]
