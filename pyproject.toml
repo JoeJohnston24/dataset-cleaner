@@ -8,7 +8,7 @@ readme = "README.md"
 package-mode = false
 
 [tool.poetry.dependencies]
-python = "^3.11"
+python = "^3.9"
 nltk = "^3.8.1"
 tqdm = "^4.66.4"
 python-dateutil = "^2.9.0.post0"
