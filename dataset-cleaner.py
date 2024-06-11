@@ -143,7 +143,7 @@ class DatasetCleaner:
             print(f"Removed original file: {file_name}")
 
 if __name__ == "__main__":
-    folder_path = input("Enter the folder path containing JSON files: ")
+    folder_path = os.getcwd() + "/cleaned" 
     cleaner = DatasetCleaner(folder_path)
     cleaner.clean_dataset()
 
