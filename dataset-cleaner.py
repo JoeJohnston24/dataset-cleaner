@@ -1,10 +1,7 @@
 import os
 import json
 import re
-from nltk.tokenize import word_tokenize
-from nltk import pos_tag
 from nltk.corpus import stopwords
-from nltk.stem import WordNetLemmatizer
 from spellchecker import SpellChecker
 import contractions
 from tqdm import tqdm
